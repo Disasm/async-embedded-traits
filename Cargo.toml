@@ -2,6 +2,7 @@
 name = "async-embedded-traits"
 version = "0.1.0"
 authors = ["Vadim Kaushan <admin@disasm.info>"]
+categories = ["asynchronous", "embedded", "hardware-support", "no-std"]
 description = "A set of async traits for embedded systems"
 license = "MIT OR Apache-2.0"
 edition = "2018"
