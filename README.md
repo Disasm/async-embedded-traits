@@ -1,5 +1,6 @@
 [![crates.io](https://img.shields.io/crates/d/async-embedded-traits.svg)](https://crates.io/crates/async-embedded-traits)
 [![crates.io](https://img.shields.io/crates/v/async-embedded-traits.svg)](https://crates.io/crates/async-embedded-traits)
+[![Build Status](https://travis-ci.org/Disasm/async-embedded-traits.svg?branch=master)](https://travis-ci.org/Disasm/async-embedded-traits)
 
 # `async-embedded-traits`
 
