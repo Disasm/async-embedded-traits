@@ -1,3 +1,6 @@
+[![crates.io](https://img.shields.io/crates/d/async-embedded-traits.svg)](https://crates.io/crates/async-embedded-traits)
+[![crates.io](https://img.shields.io/crates/v/async-embedded-traits.svg)](https://crates.io/crates/async-embedded-traits)
+
 # `async-embedded-traits`
 
 > A set of async traits for embedded systems
