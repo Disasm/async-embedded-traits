@@ -5,9 +5,9 @@ pub trait AsyncRead {
     /// Read error
     type Error;
     /// Read byte future for polling on completion
-    type ReadByteFuture<'t>: Future<Output=Result<u8, Self::Error>>;
+    type ReadByteFuture<'f>: Future<Output=Result<u8, Self::Error>>;
     /// Read future for polling on completion
-    type ReadFuture<'t>: Future<Output=Result<(), Self::Error>>;
+    type ReadFuture<'f>: Future<Output=Result<(), Self::Error>>;
 
     /// Reads a single byte from the serial interface
     fn async_read_byte(&mut self) -> Self::ReadByteFuture<'_>;
@@ -21,11 +21,11 @@ pub trait AsyncWrite {
     /// Write error
     type Error;
     /// Write byte future for polling on completion
-    type WriteByteFuture<'t>: Future<Output=Result<(), Self::Error>>;
+    type WriteByteFuture<'f>: Future<Output=Result<(), Self::Error>>;
     /// Write future for polling on completion
-    type WriteFuture<'t>: Future<Output=Result<(), Self::Error>>;
+    type WriteFuture<'f>: Future<Output=Result<(), Self::Error>>;
     /// Flush future for polling on completion
-    type FlushFuture<'t>: Future<Output=Result<(), Self::Error>>;
+    type FlushFuture<'f>: Future<Output=Result<(), Self::Error>>;
 
     /// Writes a single byte to the serial interface
     /// When the future completes, data may not be fully transmitted.
@@ -58,8 +58,8 @@ pub mod read {
 
     impl<S: Default + 'static> AsyncRead for S {
         type Error = S::Error;
-        type ReadByteFuture<'t> = DefaultReadByteFuture<'t, S>;
-        type ReadFuture<'t> = DefaultReadFuture<'t, S>;
+        type ReadByteFuture<'f> = DefaultReadByteFuture<'f, S>;
+        type ReadFuture<'f> = DefaultReadFuture<'f, S>;
 
         fn async_read_byte(&mut self) -> Self::ReadByteFuture<'_> {
             DefaultReadByteFuture {
@@ -144,9 +144,9 @@ pub mod write {
 
     impl<S: Default + 'static> AsyncWrite for S {
         type Error = S::Error;
-        type WriteByteFuture<'t> = DefaultWriteByteFuture<'t, S>;
-        type WriteFuture<'t> = DefaultWriteFuture<'t, S>;
-        type FlushFuture<'t> = DefaultFlushFuture<'t, S>;
+        type WriteByteFuture<'f> = DefaultWriteByteFuture<'f, S>;
+        type WriteFuture<'f> = DefaultWriteFuture<'f, S>;
+        type FlushFuture<'f> = DefaultFlushFuture<'f, S>;
 
         fn async_write_byte(&mut self, byte: u8) -> Self::WriteByteFuture<'_> {
             DefaultWriteByteFuture {

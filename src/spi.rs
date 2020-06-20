@@ -5,7 +5,7 @@ pub trait AsyncTransfer {
     /// Transfer error
     type Error;
     /// Transfer future for polling on completion
-    type TransferFuture<'t>: Future<Output=Result<(), Self::Error>>;
+    type TransferFuture<'f>: Future<Output=Result<(), Self::Error>>;
 
     /// Sends bytes to the slave. Returns the bytes received from the slave
     fn async_transfer<'a>(&'a mut self, data: &'a mut [u8]) -> Self::TransferFuture<'a>;
@@ -16,7 +16,7 @@ pub trait AsyncWrite {
     /// Write error
     type Error;
     /// Write future for polling on completion
-    type WriteFuture<'t>: Future<Output=Result<(), Self::Error>>;
+    type WriteFuture<'f>: Future<Output=Result<(), Self::Error>>;
 
     /// Sends bytes to the slave, ignoring all the incoming bytes
     fn async_write<'a>(&'a mut self, data: &'a [u8]) -> Self::WriteFuture<'_>;
@@ -27,7 +27,7 @@ pub trait AsyncWriteIter {
     /// Write error
     type Error;
     /// Write future for polling on completion
-    type WriteIterFuture<'t>: Future<Output=Result<(), Self::Error>>;
+    type WriteIterFuture<'f>: Future<Output=Result<(), Self::Error>>;
 
     /// Sends bytes to the slave, ignoring all the incoming bytes
     fn async_write_iter<'a>(&'a mut self, data: &'a mut dyn Iterator<Item=u8>) -> Self::WriteIterFuture<'_>;
@@ -50,7 +50,7 @@ pub mod transfer {
 
     impl<S: Default + 'static> AsyncTransfer for S {
         type Error = S::Error;
-        type TransferFuture<'t> = DefaultTransferFuture<'t, S>;
+        type TransferFuture<'f> = DefaultTransferFuture<'f, S>;
 
         fn async_transfer<'a>(&'a mut self, data: &'a mut [u8]) -> Self::TransferFuture<'a> {
             DefaultTransferFuture {
