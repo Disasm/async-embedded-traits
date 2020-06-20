@@ -2,9 +2,9 @@ use core::future::Future;
 
 /// SPI transfer
 pub trait AsyncTransfer {
-    /// Write error
+    /// Transfer error
     type Error;
-    /// Write byte future for polling on completion
+    /// Transfer future for polling on completion
     type TransferFuture<'t>: Future<Output=Result<(), Self::Error>>;
 
     /// Sends bytes to the slave. Returns the bytes received from the slave
