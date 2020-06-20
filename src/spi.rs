@@ -11,6 +11,28 @@ pub trait AsyncTransfer {
     fn async_transfer<'a>(&'a mut self, data: &'a mut [u8]) -> Self::TransferFuture<'a>;
 }
 
+/// SPI write
+pub trait AsyncWrite {
+    /// Write error
+    type Error;
+    /// Write future for polling on completion
+    type WriteFuture<'t>: Future<Output=Result<(), Self::Error>>;
+
+    /// Sends bytes to the slave, ignoring all the incoming bytes
+    fn async_write<'a>(&'a mut self, data: &'a [u8]) -> Self::WriteFuture<'_>;
+}
+
+/// SPI write (iterator version)
+pub trait AsyncWriteIter {
+    /// Write error
+    type Error;
+    /// Write future for polling on completion
+    type WriteIterFuture<'t>: Future<Output=Result<(), Self::Error>>;
+
+    /// Sends bytes to the slave, ignoring all the incoming bytes
+    fn async_write_iter<'a>(&'a mut self, data: &'a mut dyn Iterator<Item=u8>) -> Self::WriteIterFuture<'_>;
+}
+
 pub mod transfer {
     use super::AsyncTransfer;
     use core::future::Future;

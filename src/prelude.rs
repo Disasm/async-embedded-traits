@@ -13,4 +13,8 @@ pub use crate::serial::{
     AsyncWrite as _async_embedded_traits_serial_AsyncWrite
 };
 
-pub use crate::spi::AsyncTransfer as _async_embedded_traits_spi_AsyncTransfer;
+pub use crate::spi::{
+    AsyncTransfer as _async_embedded_traits_spi_AsyncTransfer,
+    AsyncWrite as _async_embedded_traits_spi_AsyncWrite,
+    AsyncWriteIter as _async_embedded_traits_spi_AsyncWriteIter,
+};
