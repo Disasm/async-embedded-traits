@@ -5,9 +5,9 @@ pub trait AsyncRead {
     /// Read error
     type Error;
     /// Read byte future for polling on completion
-    type ReadByteFuture<'f>: Future<Output=Result<u8, Self::Error>>;
+    type ReadByteFuture<'f>: Future<Output = Result<u8, Self::Error>>;
     /// Read future for polling on completion
-    type ReadFuture<'f>: Future<Output=Result<(), Self::Error>>;
+    type ReadFuture<'f>: Future<Output = Result<(), Self::Error>>;
 
     /// Reads a single byte from the serial interface
     fn async_read_byte(&mut self) -> Self::ReadByteFuture<'_>;
@@ -21,11 +21,11 @@ pub trait AsyncWrite {
     /// Write error
     type Error;
     /// Write byte future for polling on completion
-    type WriteByteFuture<'f>: Future<Output=Result<(), Self::Error>>;
+    type WriteByteFuture<'f>: Future<Output = Result<(), Self::Error>>;
     /// Write future for polling on completion
-    type WriteFuture<'f>: Future<Output=Result<(), Self::Error>>;
+    type WriteFuture<'f>: Future<Output = Result<(), Self::Error>>;
     /// Flush future for polling on completion
-    type FlushFuture<'f>: Future<Output=Result<(), Self::Error>>;
+    type FlushFuture<'f>: Future<Output = Result<(), Self::Error>>;
 
     /// Writes a single byte to the serial interface
     /// When the future completes, data may not be fully transmitted.
@@ -44,8 +44,8 @@ pub trait AsyncWrite {
 pub mod read {
     use crate::serial::AsyncRead;
     use core::future::Future;
-    use core::task::{Context, Poll};
     use core::pin::Pin;
+    use core::task::{Context, Poll};
 
     /// Marker trait to opt into default async read implementation
     ///
@@ -62,16 +62,14 @@ pub mod read {
         type ReadFuture<'f> = DefaultReadFuture<'f, S>;
 
         fn async_read_byte(&mut self) -> Self::ReadByteFuture<'_> {
-            DefaultReadByteFuture {
-                serial: self
-            }
+            DefaultReadByteFuture { serial: self }
         }
 
         fn async_read<'a>(&'a mut self, data: &'a mut [u8]) -> Self::ReadFuture<'a> {
             DefaultReadFuture {
                 serial: self,
                 data,
-                offset: 0
+                offset: 0,
             }
         }
     }
@@ -112,10 +110,10 @@ pub mod read {
                         self.data[offset] = byte;
                         self.offset += 1;
                         continue;
-                    },
+                    }
                     Err(nb::Error::Other(e)) => {
                         return Poll::Ready(Err(e));
-                    },
+                    }
                     Err(nb::Error::WouldBlock) => {
                         cx.waker().wake_by_ref();
                         return Poll::Pending;
@@ -130,8 +128,8 @@ pub mod read {
 pub mod write {
     use crate::serial::AsyncWrite;
     use core::future::Future;
-    use core::task::{Context, Poll};
     use core::pin::Pin;
+    use core::task::{Context, Poll};
 
     /// Marker trait to opt into default async write implementation
     ///
@@ -149,23 +147,15 @@ pub mod write {
         type FlushFuture<'f> = DefaultFlushFuture<'f, S>;
 
         fn async_write_byte(&mut self, byte: u8) -> Self::WriteByteFuture<'_> {
-            DefaultWriteByteFuture {
-                serial: self,
-                byte
-            }
+            DefaultWriteByteFuture { serial: self, byte }
         }
 
         fn async_write<'a>(&'a mut self, data: &'a [u8]) -> DefaultWriteFuture<'a, S> {
-            DefaultWriteFuture {
-                serial: self,
-                data,
-            }
+            DefaultWriteFuture { serial: self, data }
         }
 
         fn async_flush(&mut self) -> DefaultFlushFuture<'_, S> {
-            DefaultFlushFuture {
-                serial: self
-            }
+            DefaultFlushFuture { serial: self }
         }
     }
 
@@ -185,7 +175,7 @@ pub mod write {
                 Err(nb::Error::WouldBlock) => {
                     cx.waker().wake_by_ref();
                     Poll::Pending
-                },
+                }
             }
         }
     }
@@ -204,10 +194,8 @@ pub mod write {
                     Ok(()) => {
                         self.data = &self.data[1..];
                         continue;
-                    },
-                    Err(nb::Error::Other(e)) => {
-                        return Poll::Ready(Err(e))
-                    },
+                    }
+                    Err(nb::Error::Other(e)) => return Poll::Ready(Err(e)),
                     Err(nb::Error::WouldBlock) => {
                         cx.waker().wake_by_ref();
                         return Poll::Pending;
