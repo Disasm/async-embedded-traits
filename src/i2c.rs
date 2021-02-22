@@ -4,9 +4,6 @@ use core::future::Future;
 ///
 /// [`i2c::blocking::WriteRead`]: https://docs.rs/embedded-hal/0.2.4/embedded_hal/blocking/i2c/trait.WriteRead.html
 pub trait AsyncI2cTransfer {
-    /// I2C slave address width: for 7-bit should be `u8`, for 10-bit `u16`
-    type AddressWidth;
-
     /// Transfer error
     type Error;
 
@@ -16,7 +13,7 @@ pub trait AsyncI2cTransfer {
     /// Sends bytes to the slave. Returns the bytes received from the slave
     fn async_transfer<'a>(
         &'a mut self,
-        address: Self::AddressWidth,
+        address: u16,
         tx_data: &'a [u8],
         rx_data: &'a mut [u8],
     ) -> Self::TransferFuture<'a>;
@@ -24,9 +21,6 @@ pub trait AsyncI2cTransfer {
 
 /// I2C write
 pub trait AsyncI2cWrite {
-    /// I2C slave address width: for 7-bit should be `u8`, for 10-bit `u16`
-    type AddressWidth;
-
     /// Write error
     type Error;
 
@@ -36,7 +30,7 @@ pub trait AsyncI2cWrite {
     /// Sends bytes to the slave, ignoring all the incoming bytes
     fn async_write<'a>(
         &'a mut self,
-        address: Self::AddressWidth,
+        address: u16,
         data: &'a [u8],
     ) -> Self::WriteFuture<'_>;
 }
