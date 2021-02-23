@@ -8,7 +8,7 @@ use core::future::Future;
 /// implement this trait for different types of `UXX`.
 pub trait AsyncDelayMs<UXX> {
     /// Delay future for polling on completion
-    type DelayFuture<'f>: Future<Output=()>;
+    type DelayFuture<'f>: Future<Output = ()>;
 
     /// Pauses execution for `ms` milliseconds
     fn async_delay_ms(&mut self, ms: UXX) -> Self::DelayFuture<'_>;
@@ -20,7 +20,7 @@ pub trait AsyncDelayMs<UXX> {
 /// implement this trait for different types of `UXX`.
 pub trait AsyncDelayUs<UXX> {
     /// Delay future for polling on completion
-    type DelayFuture<'f>: Future<Output=()>;
+    type DelayFuture<'f>: Future<Output = ()>;
 
     /// Pauses execution for `us` microseconds
     fn async_delay_us(&mut self, us: UXX) -> Self::DelayFuture<'_>;
@@ -58,7 +58,7 @@ macro_rules! impl_delay_ms_for_ms_u32 {
                 self.async_delay_ms(ms as u32)
             }
         }
-    }
+    };
 }
 
 /// Implement `AsyncDelayUs<u16>`, `AsyncDelayUs<u8>` and `AsyncDelayUs<i32>`
@@ -93,7 +93,7 @@ macro_rules! impl_delay_us_for_us_u32 {
                 self.async_delay_us(us as u32)
             }
         }
-    }
+    };
 }
 
 /// Implement `AsyncDelayUs<u32>`, `AsyncDelayUs<u16>`, `AsyncDelayUs<u8>` and `AsyncDelayUs<i32>`
@@ -111,7 +111,7 @@ macro_rules! impl_delay_us_for_us_u64 {
         }
 
         $crate::impl_delay_us_for_us_u32!($delay);
-    }
+    };
 }
 
 /// Implement `AsyncDelayMs<u32>`, `AsyncDelayMs<u16>`, `AsyncDelayMs<u8>` and `AsyncDelayMs<i32>`
@@ -128,5 +128,5 @@ macro_rules! impl_delay_ms_for_us_u64 {
         }
 
         $crate::impl_delay_ms_for_ms_u32!($delay);
-    }
+    };
 }

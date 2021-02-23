@@ -5,7 +5,7 @@ pub trait AsyncTransfer {
     /// Transfer error
     type Error;
     /// Transfer future for polling on completion
-    type TransferFuture<'f>: Future<Output=Result<(), Self::Error>>;
+    type TransferFuture<'f>: Future<Output = Result<(), Self::Error>>;
 
     /// Sends bytes to the slave. Returns the bytes received from the slave
     fn async_transfer<'a>(&'a mut self, data: &'a mut [u8]) -> Self::TransferFuture<'a>;
@@ -16,7 +16,7 @@ pub trait AsyncWrite {
     /// Write error
     type Error;
     /// Write future for polling on completion
-    type WriteFuture<'f>: Future<Output=Result<(), Self::Error>>;
+    type WriteFuture<'f>: Future<Output = Result<(), Self::Error>>;
 
     /// Sends bytes to the slave, ignoring all the incoming bytes
     fn async_write<'a>(&'a mut self, data: &'a [u8]) -> Self::WriteFuture<'_>;
@@ -27,17 +27,20 @@ pub trait AsyncWriteIter {
     /// Write error
     type Error;
     /// Write future for polling on completion
-    type WriteIterFuture<'f>: Future<Output=Result<(), Self::Error>>;
+    type WriteIterFuture<'f>: Future<Output = Result<(), Self::Error>>;
 
     /// Sends bytes to the slave, ignoring all the incoming bytes
-    fn async_write_iter<'a>(&'a mut self, data: &'a mut dyn Iterator<Item=u8>) -> Self::WriteIterFuture<'_>;
+    fn async_write_iter<'a>(
+        &'a mut self,
+        data: &'a mut dyn Iterator<Item = u8>,
+    ) -> Self::WriteIterFuture<'_>;
 }
 
 pub mod transfer {
     use super::AsyncTransfer;
     use core::future::Future;
-    use core::task::{Context, Poll};
     use core::pin::Pin;
+    use core::task::{Context, Poll};
 
     /// Marker trait to opt into default async transfer implementation
     ///
@@ -57,7 +60,7 @@ pub mod transfer {
                 spi: self,
                 data,
                 offset: 0,
-                state: State::Sending
+                state: State::Sending,
             }
         }
     }
@@ -86,32 +89,30 @@ pub mod transfer {
                             Ok(()) => {
                                 self.state = State::Receiving;
                                 continue;
-                            },
+                            }
                             Err(nb::Error::Other(e)) => {
                                 return Poll::Ready(Err(e));
-                            },
+                            }
                             Err(nb::Error::WouldBlock) => {
                                 cx.waker().wake_by_ref();
                                 return Poll::Pending;
                             }
                         }
-                    },
-                    State::Receiving => {
-                        match self.spi.read() {
-                            Ok(byte) => {
-                                let offset = self.offset;
-                                self.data[offset] = byte;
-                                self.offset += 1;
-                                self.state = State::Sending;
-                                continue;
-                            },
-                            Err(nb::Error::Other(e)) => {
-                                return Poll::Ready(Err(e));
-                            },
-                            Err(nb::Error::WouldBlock) => {
-                                cx.waker().wake_by_ref();
-                                return Poll::Pending;
-                            }
+                    }
+                    State::Receiving => match self.spi.read() {
+                        Ok(byte) => {
+                            let offset = self.offset;
+                            self.data[offset] = byte;
+                            self.offset += 1;
+                            self.state = State::Sending;
+                            continue;
+                        }
+                        Err(nb::Error::Other(e)) => {
+                            return Poll::Ready(Err(e));
+                        }
+                        Err(nb::Error::WouldBlock) => {
+                            cx.waker().wake_by_ref();
+                            return Poll::Pending;
                         }
                     },
                 }
