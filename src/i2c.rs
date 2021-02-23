@@ -9,7 +9,7 @@ use sealed::I2cAddressType;
 #[derive(Debug)]
 pub struct AddressRangeError;
 
-// A 7-bit I2C address
+/// A 7-bit I2C address
 pub struct I2cAddress7Bit(u8);
 
 impl TryFrom<u8> for I2cAddress7Bit {
@@ -34,7 +34,7 @@ impl From<I2cAddress7Bit> for u8 {
 
 impl I2cAddressType for I2cAddress7Bit {}
 
-// A 10-bit I2C address
+/// A 10-bit I2C address
 pub struct I2cAddress10Bit(u16);
 
 impl TryFrom<u16> for I2cAddress10Bit {
