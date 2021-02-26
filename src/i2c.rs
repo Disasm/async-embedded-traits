@@ -86,6 +86,18 @@ pub trait AsyncI2cWrite<A: I2cAddressType> {
     /// Write future for polling on completion
     type WriteFuture<'f>: Future<Output = Result<(), Self::Error>>;
 
-    /// Sends bytes to the slave, ignoring all the incoming bytes
+    /// Sends bytes to the slave
     fn async_write<'a>(&'a mut self, address: A, data: &'a [u8]) -> Self::WriteFuture<'_>;
+}
+
+/// I2C read
+pub trait AsyncI2cRead<A: I2cAddressType> {
+    /// Read error
+    type Error;
+
+    /// Read future for polling on completion
+    type ReadFuture<'f>: Future<Output = Result<(), Self::Error>>;
+
+    /// Reads bytes from the slave
+    fn async_read<'a>(&'a mut self, address: A, data: &'a mut [u8]) -> Self::ReadFuture<'_>;
 }
